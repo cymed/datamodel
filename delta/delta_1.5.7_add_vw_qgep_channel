@@ -1,0 +1,122 @@
+-- View: qgep_od.vw_channel
+
+-- DROP VIEW qgep_od.vw_channel;
+
+CREATE OR REPLACE VIEW qgep_od.vw_qgep_channel
+ AS
+ SELECT channel.obj_id,
+    channel.bedding_encasement,
+    channel.connection_type,
+    channel.function_hierarchic,
+    channel.function_hydraulic,
+    channel.jetting_interval,
+    channel.pipe_length,
+    channel.usage_current,
+    channel.usage_planned,
+    wastewater_structure._bottom_label,
+    wastewater_structure._cover_label,
+    wastewater_structure._depth,
+    wastewater_structure._function_hierarchic,
+    wastewater_structure._input_label,
+    wastewater_structure._label,
+    wastewater_structure._output_label,
+    wastewater_structure._usage_current,
+    wastewater_structure.accessibility,
+    wastewater_structure.contract_section,
+    wastewater_structure.detail_geometry_geometry,
+    wastewater_structure.financing,
+    wastewater_structure.fk_dataowner,
+    wastewater_structure.fk_main_cover,
+    wastewater_structure.fk_main_wastewater_node,
+    wastewater_structure.fk_operator,
+    wastewater_structure.fk_owner,
+    wastewater_structure.fk_provider,
+    wastewater_structure.gross_costs,
+    wastewater_structure.identifier,
+    wastewater_structure.inspection_interval,
+    wastewater_structure.last_modification,
+    wastewater_structure.location_name,
+    wastewater_structure.records,
+    wastewater_structure.remark,
+    wastewater_structure.renovation_necessity,
+    wastewater_structure.replacement_value,
+    wastewater_structure.rv_base_year,
+    wastewater_structure.rv_construction_type,
+    wastewater_structure.status,
+    wastewater_structure.structure_condition,
+    wastewater_structure.subsidies,
+    wastewater_structure.year_of_construction,
+    wastewater_structure.year_of_replacement,
+	ST_LineMerge(ST_Collect(re.progression_geometry)) as progression_geometry
+   FROM qgep_od.channel
+     LEFT JOIN qgep_od.wastewater_structure ON wastewater_structure.obj_id::text = channel.obj_id::text
+	 LEFT JOIN qgep_od.wastewater_networkelement ne ON ne.fk_wastewater_structure::text = channel.obj_id::text
+     LEFT JOIN qgep_od.reach re ON ne.obj_id::text = re.obj_id::text
+	 GROUP BY channel.obj_id,
+    channel.bedding_encasement,
+    channel.connection_type,
+    channel.function_hierarchic,
+    channel.function_hydraulic,
+    channel.jetting_interval,
+    channel.pipe_length,
+    channel.usage_current,
+    channel.usage_planned,
+    wastewater_structure._bottom_label,
+    wastewater_structure._cover_label,
+    wastewater_structure._depth,
+    wastewater_structure._function_hierarchic,
+    wastewater_structure._input_label,
+    wastewater_structure._label,
+    wastewater_structure._output_label,
+    wastewater_structure._usage_current,
+    wastewater_structure.accessibility,
+    wastewater_structure.contract_section,
+    wastewater_structure.detail_geometry_geometry,
+    wastewater_structure.financing,
+    wastewater_structure.fk_dataowner,
+    wastewater_structure.fk_main_cover,
+    wastewater_structure.fk_main_wastewater_node,
+    wastewater_structure.fk_operator,
+    wastewater_structure.fk_owner,
+    wastewater_structure.fk_provider,
+    wastewater_structure.gross_costs,
+    wastewater_structure.identifier,
+    wastewater_structure.inspection_interval,
+    wastewater_structure.last_modification,
+    wastewater_structure.location_name,
+    wastewater_structure.records,
+    wastewater_structure.remark,
+    wastewater_structure.renovation_necessity,
+    wastewater_structure.replacement_value,
+    wastewater_structure.rv_base_year,
+    wastewater_structure.rv_construction_type,
+    wastewater_structure.status,
+    wastewater_structure.structure_condition,
+    wastewater_structure.subsidies,
+    wastewater_structure.year_of_construction,
+    wastewater_structure.year_of_replacement;
+
+ALTER TABLE qgep_od.vw_qgep_channel
+    OWNER TO postgres;
+
+
+CREATE TRIGGER tr_vw_qgep_channel_on_delete
+    INSTEAD OF DELETE
+    ON qgep_od.vw_qgep_channel
+    FOR EACH ROW
+    EXECUTE FUNCTION qgep_od.ft_vw_channel_delete();
+
+
+CREATE TRIGGER tr_vw_qgep_channel_on_insert
+    INSTEAD OF INSERT
+    ON qgep_od.vw_qgep_channel
+    FOR EACH ROW
+    EXECUTE FUNCTION qgep_od.ft_vw_channel_insert();
+
+
+CREATE TRIGGER tr_vw_qgep_channel_on_update
+    INSTEAD OF UPDATE 
+    ON qgep_od.vw_qgep_channel
+    FOR EACH ROW
+    EXECUTE FUNCTION qgep_od.ft_vw_channel_update();
+
