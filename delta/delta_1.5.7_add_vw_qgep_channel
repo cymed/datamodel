@@ -1,7 +1,3 @@
--- View: qgep_od.vw_channel
-
--- DROP VIEW qgep_od.vw_channel;
-
 CREATE OR REPLACE VIEW qgep_od.vw_qgep_channel
  AS
  SELECT channel.obj_id,
